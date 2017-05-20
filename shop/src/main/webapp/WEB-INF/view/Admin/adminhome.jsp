@@ -5,21 +5,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
 </head>
 <body>
 	<a href="manage_categories">Manage Category </a>
 	<a href="manage_products">Manage Product </a>
 	<a href="manage_suppliers">Manage Supplier</a>
-	<c:if test="${isuserclickedCategory==true}">
+	<c:if test="${isUserClickedCateogories==true}">
 		<jsp:include page="category.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${isuserclickedProduct==true}">
+	<c:if test="${isUserClickedProducts==true}">
 		<jsp:include page="product.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${isuserclickedSupplier==true}">
+	<c:if test="${isUserClickedSupplier==true}">
 		<jsp:include page="supplier.jsp"></jsp:include>
 	</c:if>
-	<h1>{$getallCategories}</h1>
+	
 </body>
 </html>

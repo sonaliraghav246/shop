@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,21 +26,27 @@ public class ProductController {
 	@Autowired
 	private ProductDAO productDAO;
 	
-				public ModelAndView getallproducts()
+				@RequestMapping(value="/manage_products",method=RequestMethod.GET)
+				public String listproducts(Model model)
 				{
-					ModelAndView mv = new ModelAndView("Admin/adminhome");
-					List<Product> productlist = productDAO.getallProducts();
-					mv.addObject("productlist",productlist);
-					return mv;
+//					System.out.println("view product");
+				//	ModelAndView mv = new ModelAndView("Admin/adminhome");
+					//List<Product> productlist = productDAO.getallProducts();
+					model.addAttribute("product",product);
+					model.addAttribute("productlist",productDAO.getallProducts());
+					model.addAttribute("isUserClickedProducts","true");
+					return "/Admin/adminhome";
 				}
 				
-				@RequestMapping("/manage_products_edit")
-				public ModelAndView createproduct(@RequestParam("id")String id,@RequestParam("name")String name,@RequestParam("amount")String amount,@RequestParam("quantity")String quantity)
+				@RequestMapping("/manage_products_add")
+				public ModelAndView createproduct(@RequestParam("id")String id,@RequestParam("name")String name,@RequestParam("amount")float amount,@RequestParam("quantity")int quantity,@RequestParam("price")float price)
 				{
 					product.setId(id);
 					product.setName(name);
 					product.setAmount(amount);
 					product.setQuantity(quantity);
+					product.setPrice(price);
+					amount=price*quantity;
 					ModelAndView mv = new ModelAndView("redirect:/manage_products");
 					if(productDAO.save(product))
 					{
@@ -50,13 +59,15 @@ public class ProductController {
 					return mv;
 				}
 				
-				@RequestMapping("/manage_products_update/{id}")
-				public ModelAndView updateproduct(@RequestParam("id")String id,@RequestParam("name")String name,@RequestParam("amount")String amount,@RequestParam("quantity")String quantity)
+				@PostMapping("/manage_products_update")
+				public ModelAndView updateproduct(@RequestParam("id")String id,@RequestParam("name")String name,@RequestParam("amount")float amount,@RequestParam("quantity")int quantity,@RequestParam("price")float price)
 				{
+					
 					product.setId(id);
 					product.setName(name);
 					product.setAmount(amount);
 					product.setQuantity(quantity);
+					product.setPrice(price);
 					ModelAndView mv = new ModelAndView("redirect:/manage_products");
 					if(productDAO.update(product))
 					{
@@ -72,6 +83,7 @@ public class ProductController {
 				@RequestMapping("/manage_products_remove/{id}")
 				public ModelAndView deleteproducts(@PathVariable("id")String id)
 				{
+					product=productDAO.getProductById(id);
 					ModelAndView mv = new ModelAndView("redirect:/manage_products");
 					if(productDAO.delete(product))
 					{
@@ -84,5 +96,29 @@ public class ProductController {
 					}
 					return mv;
 				}
+				
+				@GetMapping("/manage_products_edit/{id}")
+				public ModelAndView updatecategory(@PathVariable("id")String id)
+				{
+					ModelAndView mv = new ModelAndView("forward:/manage_products");
+					product=productDAO.getProductById(id);
+					/*ModelAndView mv = new ModelAndView("redirect:/manage_categories");
+					mv.addObject("category",categoryDAO.getCategoryByID(id));*/
+					
+					
+//					product.setId(id);
+//					product.setName(name);
+//					product.setDescription(description);
+//					if(productDAO.update(product))
+//					{
+//						mv.addObject("message","Successfully update category");
+//					}
+//					else
+//					{
+//						mv.addObject("message","Not able to update category.Please contact administrator");
+//					}
+					return mv;
+				}
+
 
 }
